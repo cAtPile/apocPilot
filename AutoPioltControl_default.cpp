@@ -1,7 +1,7 @@
-#include "offboard_ctrl/OffboardControl.h"
+#include "offboard_ctrl/AutoPilotControl.h"
 
 
-OffboardControl::OffboardControl() : rate(20.0) {
+AutoPilotControl::AutoPilotControl() : rate(20.0) {
     // 初始化订阅者
     state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &OffboardControl::state_cb, this);  // 订阅飞行器状态
     local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);         // 发布位置目标
@@ -53,36 +53,6 @@ OffboardControl::OffboardControl() : rate(20.0) {
     // 设置飞行器控制频率
     ROS_INFO("OffboardControl initialized with a rate of %.2f Hz", rate.expectedCycleTime().toSec());
 }
-
-
-/*OffboardControl::OffboardControl() : rate(20.0) {
-
-    // 初始化订阅者、发布者和服务客户端
-    state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &OffboardControl::state_cb, this);
-    local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);
-    arming_client = nh.serviceClient<mavros_msgs::CommandBool>("mavros/cmd/arming");
-    set_mode_client = nh.serviceClient<mavros_msgs::SetMode>("mavros/set_mode");
-    local_pos_sub = nh.subscribe<geometry_msgs::PoseStamped>("mavros/local_position/pose", 10, &OffboardControl::local_pos_cb, this);
-
-    // 初始化状态
-    current_state.connected = false;
-    current_state.armed = false;
-    current_state.mode = "STABILIZED";  // 默认模式
-    pose.header.frame_id = "map";
-
-    // 初始化目标位置
-    pose.pose.position.x = 0;
-    pose.pose.position.y = 0;
-    pose.pose.position.z = 0;
-    pose.pose.orientation.x = 0.0;
-    pose.pose.orientation.y = 0.0;
-    pose.pose.orientation.z = 0.0;
-    pose.pose.orientation.w = 1.0;
-
-    // 初始化上次请求时间
-    last_request = ros::Time::now();
-
-}*/
 
 void OffboardControl::state_cb(const mavros_msgs::State::ConstPtr& msg) {
     current_state = *msg;
