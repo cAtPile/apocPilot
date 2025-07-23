@@ -72,7 +72,7 @@ public:
     void setPosition(float set_point_x, float set_point_y, float set_point_z);
 
     //飞行到指定位置
-    bool flyToPosition(float x, float y, float z);
+    bool flyToPosition(float target_absolute_x, float target_absolute_y, float target_absolute_z);
 
     // 检查是否到达目标位置
     bool hasReachedTarget(float check_target_x, float check_target_y, float check_target_z);
