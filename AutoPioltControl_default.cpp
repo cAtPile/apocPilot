@@ -1,6 +1,61 @@
 #include "offboard_ctrl/OffboardControl.h"
 
+
 OffboardControl::OffboardControl() : rate(20.0) {
+    // 初始化订阅者
+    state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &OffboardControl::state_cb, this);  // 订阅飞行器状态
+    local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);         // 发布位置目标
+    arming_client = nh.serviceClient<mavros_msgs::CommandBool>("mavros/cmd/arming");                        // 解锁/锁定服务
+    set_mode_client = nh.serviceClient<mavros_msgs::SetMode>("mavros/set_mode");                           // 设置飞行模式服务
+    local_pos_sub = nh.subscribe<geometry_msgs::PoseStamped>
+        ("mavros/local_position/pose", 10, &OffboardControl::local_pos_cb, this); // 订阅当前位置
+
+    // 初始化飞行器状态
+    current_state.connected = false;
+    current_state.armed = false;
+    current_state.mode = "STABILIZED";  // 默认飞行模式为 STABILIZED
+
+    // 初始化目标位置 pose
+    pose.header.frame_id = "map";  // 设定坐标系为地图坐标系
+    pose.pose.position.x = 0;
+    pose.pose.position.y = 0;
+    pose.pose.position.z = 0;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.0;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 1.0; // 四元数表示，默认朝向
+
+    // 初始化 PID 控制参数（x,y,h和yaw）
+    Kp_x = 0.5; Ki_x = 0.05; Kd_x = 0.1;  // X轴 PID 参数
+    Kp_y = 0.5; Ki_y = 0.05; Kd_y = 0.1;  // Y轴 PID 参数
+    Kp_h = 0.5; Ki_h = 0.05; Kd_h = 0.1;  // Z轴 PID 参数
+    Kp_yaw = 0.5; Ki_yaw = 0.05; Kd_yaw = 0.1;  // Yaw轴 PID 参数
+
+    // 初始化 PID 状态
+    previous_error_x = 0.0; integral_x = 0.0;
+    previous_error_y = 0.0; integral_y = 0.0;
+    previous_error_z = 0.0; integral_z = 0.0;
+    previous_error_yaw = 0.0; integral_yaw = 0.0;
+
+    // 初始化上次请求时间
+    last_request = ros::Time::now();
+
+    // 初始化Home位置
+    home_position.header.stamp = ros::Time(0);  // 未记录时使用时间戳为0，表示尚未设置
+    home_position.pose.position.x = 0;
+    home_position.pose.position.y = 0;
+    home_position.pose.position.z = 0;
+    home_position.pose.orientation.x = 0.0;
+    home_position.pose.orientation.y = 0.0;
+    home_position.pose.orientation.z = 0.0;
+    home_position.pose.orientation.w = 1.0;
+
+    // 设置飞行器控制频率
+    ROS_INFO("OffboardControl initialized with a rate of %.2f Hz", rate.expectedCycleTime().toSec());
+}
+
+
+/*OffboardControl::OffboardControl() : rate(20.0) {
 
     // 初始化订阅者、发布者和服务客户端
     state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &OffboardControl::state_cb, this);
@@ -27,7 +82,7 @@ OffboardControl::OffboardControl() : rate(20.0) {
     // 初始化上次请求时间
     last_request = ros::Time::now();
 
-}
+}*/
 
 void OffboardControl::state_cb(const mavros_msgs::State::ConstPtr& msg) {
     current_state = *msg;
