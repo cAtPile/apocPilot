@@ -52,7 +52,7 @@ public:
     geometry_msgs::PoseStamped home_position;
 
     // 构造函数
-    OffboardControl();
+    AutoPilotControl();
 
     // 连接到飞控
     bool connect();
@@ -64,18 +64,15 @@ public:
     bool setMode(const std::string& mode);
 
     // 记录Home位置
-    bool recordingHomePoint();
+    void recordingHomePoint();
 
-    //PID控制器
-    float pidControl
-
-    // 设置目标位置
+    // 设置目标位置（待定）
     void setPosition(float set_point_x, float set_point_y, float set_point_z);
 
-    //飞行到指定位置
+    //飞行到指定位置（待定）
     bool flyToPosition(float target_absolute_x, float target_absolute_y, float target_absolute_z);
 
-    // 检查是否到达目标位置
+    // 检查是否到达目标位置（待修）
     bool hasReachedTarget(float check_target_x, float check_target_y, float check_target_z);
 
     // 移动到相对位置
@@ -100,10 +97,10 @@ public:
     void targetPositionRelativeHome(float relative_home_x, float relative_home_y, float relative_home_z);
 
     //闭环相对运动
-    void MoveRelative_PID(float in_loop_x,float in_loop_y,float in_loop_h);
+    void MoveRelativePID(float in_loop_x,float in_loop_y,float in_loop_h);
 
     //闭环相对Home运动
-    void ApprochRelativeHome_PID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
+    void ApprochRelativeHomePID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
 
     //
 
