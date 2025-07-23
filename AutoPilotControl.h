@@ -69,7 +69,7 @@ public:
     bool recordingHomePoint();
 
     // 设置目标位置
-    void setPosition(float target_x, float target_y, float target_z);
+    void setPosition(float set_point_x, float set_point_y, float set_point_z);
 
     // 计算两点间距离
     float calculateDistance(float x1, float y1, float z1, float x2, float y2, float z2);
