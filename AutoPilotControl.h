@@ -65,14 +65,11 @@ public:
     // 设置飞行模式
     bool setMode(const std::string& mode);
 
-    // 发送初始位置指令
+    // 记录Home位置
     bool recordingHomePoint();
 
     // 设置目标位置
     void setPosition(float set_point_x, float set_point_y, float set_point_z);
-
-    // 计算两点间距离
-    float calculateDistance(float x1, float y1, float z1, float x2, float y2, float z2);
 
     //飞行到指定位置
     bool flyToPosition(float x, float y, float z);
@@ -98,11 +95,10 @@ public:
     //自转
     void rotation(double angle, double angular_velocity = 0.1);
 
-    //起飞
-    void takeoff(float takeoff_altitude);
+    //相对起飞点飞行
+    void targetPositionRelativeHome(float relative_home_x, float relative_home_y, float relative_home_z);
 
     //
-    void targetPositionRelativeHome(float relative_home_x, float relative_home_y, float relative_home_z);
 
 };
 
