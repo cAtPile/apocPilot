@@ -99,10 +99,10 @@ public:
     void targetPositionRelativeHome(float relative_home_x, float relative_home_y, float relative_home_z);
 
     //闭环相对运动
-    bool MoveRelative_PID(float in_loop_x,float in_loop_y,float in_loop_h)
+    void MoveRelative_PID(float in_loop_x,float in_loop_y,float in_loop_h);
 
     //闭环相对Home运动
-    bool ApprochRelative_PID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h)
+    void ApprochRelativeHome_PID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
 
 };
 
