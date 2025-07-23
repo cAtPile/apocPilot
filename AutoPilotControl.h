@@ -22,10 +22,12 @@ private:
     ros::ServiceClient arming_client;
     ros::ServiceClient set_mode_client;
     ros::Subscriber local_pos_sub;
-    ros::Time waypoint_reached_time;
     ros::Time land_start_time;
-    bool waiting_at_waypoint = false;
+
+    //返航（待定）
     bool returning_home = false;
+
+    //降落初始化（待定）
     bool landing_initiated = false;
 
     // 当前状态
@@ -33,7 +35,6 @@ private:
 
     // 目标位置和实际位置
     geometry_msgs::PoseStamped pose;
-
 
     // 发布频率
     ros::Rate rate;
@@ -50,8 +51,8 @@ private:
 public:
 
     geometry_msgs::PoseStamped current_position;
-
     geometry_msgs::PoseStamped home_position;
+
     // 构造函数
     OffboardControl();
 
@@ -65,7 +66,7 @@ public:
     bool setMode(const std::string& mode);
 
     // 发送初始位置指令
-    bool recordingHomePoints();
+    bool recordingHomePoint();
 
     // 设置目标位置
     void setPosition(float target_x, float target_y, float target_z);
