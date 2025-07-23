@@ -1,6 +1,6 @@
 #include "offboard_ctrl/AutoPilotControl.h"
 
-
+//构造函数
 AutoPilotControl::AutoPilotControl() : rate(20.0) {
     // 初始化订阅者
     state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &OffboardControl::state_cb, this);  // 订阅飞行器状态
@@ -51,18 +51,36 @@ AutoPilotControl::AutoPilotControl() : rate(20.0) {
     home_position.pose.orientation.w = 1.0;
 
     // 设置飞行器控制频率
-    ROS_INFO("OffboardControl initialized with a rate of %.2f Hz", rate.expectedCycleTime().toSec());
+    ROS_INFO("AutoPilotControl initialized with a rate of %.2f Hz", rate.expectedCycleTime().toSec());
 }
 
-void OffboardControl::state_cb(const mavros_msgs::State::ConstPtr& msg) {
+//状态回调函数
+void AutoPilotControl::state_cb(const mavros_msgs::State::ConstPtr& msg) {
     current_state = *msg;
 }
 
-void OffboardControl::local_pos_cb(const geometry_msgs::PoseStamped::ConstPtr& msg) {
+//位置回调函数
+void AutoPilotControl::local_pos_cb(const geometry_msgs::PoseStamped::ConstPtr& msg) {
     current_position = *msg;
 }
 
-bool OffboardControl::connect() {
+/*
+PID 控制器
+输入：误差（Error），速度PID参数（Kp，Ki，Kd），状态变量（previous_error，integral）
+输出：控制量（控制的速度）
+*/
+//PID计算器
+float AutoPilotControl::pidControl(float error, float &previous_error, float &integral, 
+                                            float Kp, float Ki, float Kd) {
+    integral += error;  // 积分项：累计误差
+    float derivative = error - previous_error;  // 微分项：计算误差的变化率
+    float output = Kp * error + Ki * integral + Kd * derivative;  // PID输出
+    previous_error = error;  // 更新上次误差
+    return output;
+}
+
+//连接
+bool AutoPilotControl::connect() {
 
     // 等待 FCU 连接
     ROS_INFO("Waiting for FCU connection...");
@@ -94,7 +112,7 @@ bool OffboardControl::connect() {
 }
 
 //设置飞行模式
-bool OffboardControl::setMode(const std::string& mode){
+bool AutoPilotControl::setMode(const std::string& mode){
             
     if (!current_state.connected) {
         ROS_WARN("Not connected to FCU, cannot set mode");
@@ -127,7 +145,7 @@ bool OffboardControl::setMode(const std::string& mode){
 
 
 // 解锁无人机
-bool OffboardControl::arm(bool arm_state) {
+bool AutoPilotControl::arm(bool arm_state) {
     
     // 容忍时间
     ros::Duration timeout_duration(5.0); 
@@ -183,7 +201,7 @@ bool OffboardControl::arm(bool arm_state) {
 }
 
 //记录home位置姿态
-bool OffboardControl::recordingHomePoints() {
+bool AutoPilotControl::recordingHomePoints() {
 
     ROS_INFO("Sending Home Position...");
          
