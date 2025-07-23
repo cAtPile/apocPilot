@@ -68,6 +68,9 @@ public:
     // 记录Home位置
     bool recordingHomePoint();
 
+    //PID控制器
+    float pidControl
+
     // 设置目标位置
     void setPosition(float set_point_x, float set_point_y, float set_point_z);
 
@@ -103,6 +106,8 @@ public:
 
     //闭环相对Home运动
     void ApprochRelativeHome_PID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
+
+    //
 
 };
 
