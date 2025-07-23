@@ -75,7 +75,7 @@ public:
     bool flyToPosition(float x, float y, float z);
 
     // 检查是否到达目标位置
-    bool hasReachedTarget(float target_x, float target_y, float target_z);
+    bool hasReachedTarget(float check_target_x, float check_target_y, float check_target_z);
 
     // 移动到相对位置
     void move(float move_x, float move_y, float move_z);
