@@ -24,12 +24,6 @@ private:
     ros::Subscriber local_pos_sub;
     ros::Time land_start_time;
 
-    //返航（待定）
-    bool returning_home = false;
-
-    //降落初始化（待定）
-    bool landing_initiated = false;
-
     // 当前状态
     mavros_msgs::State current_state;
 
@@ -47,6 +41,10 @@ private:
 
     // 实际位置回调函数
     void local_pos_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+
+    // PID 控制器
+    float pidControl(float error, float &previous_error, float &integral, 
+                        float Kp, float Ki, float Kd);
 
 public:
 
