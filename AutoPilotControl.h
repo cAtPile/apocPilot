@@ -11,7 +11,7 @@
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2/LinearMath/Matrix3x3.h>
 
-class AutoPilotControl {
+class autoPilotControl {
 private:
     // ROS节点句柄
     ros::NodeHandle nh;
@@ -52,7 +52,7 @@ public:
     geometry_msgs::PoseStamped home_position;
 
     // 构造函数
-    AutoPilotControl();
+    autoPilotControl();
 
     // 连接到飞控
     bool connect();
@@ -66,6 +66,9 @@ public:
     // 记录Home位置
     void recordingHomePoint();
 
+    // 起飞(速度控制)
+    void takeoff(float altitude);
+
     // 设置目标位置（待定）
     void setPosition(float set_point_x, float set_point_y, float set_point_z);
 
@@ -75,7 +78,7 @@ public:
     // 检查是否到达目标位置（待修）
     bool hasReachedTarget(float check_target_x, float check_target_y, float check_target_z);
 
-    // 移动到相对位置
+    // 移动到相对位置(待定)
     void move(float move_x, float move_y, float move_z);
 
     // 开始自动降落
@@ -97,10 +100,10 @@ public:
     void targetPositionRelativeHome(float relative_home_x, float relative_home_y, float relative_home_z);
 
     //闭环相对运动
-    void MoveRelativePID(float in_loop_x,float in_loop_y,float in_loop_h);
+    void moveRelativePID(float in_loop_x,float in_loop_y,float in_loop_h);
 
     //闭环相对Home运动
-    void ApprochRelativeHomePID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
+    void approchRelativeHomePID(float approch_inLoop_x,float approch_inLoop_y,float approch_inLoop_h);
 
     //
 
